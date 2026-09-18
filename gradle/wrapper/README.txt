@@ -1,0 +1,1 @@
+Для полностью автономного запуска gradlew требуется gradle-wrapper.jar. Если GitHub-репозиторий создаётся через Android Studio, этот файл генерируется автоматически. Либо запустите `gradle wrapper --gradle-version 8.7` один раз на ПК.

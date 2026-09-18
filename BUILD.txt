@@ -1,0 +1,1 @@
+Откройте проект в Android Studio. Gradle Wrapper не включён, чтобы не раздувать архив. Android Studio автоматически предложит настроить Gradle.
