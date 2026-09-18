@@ -24,23 +24,26 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Initialize Gradle Wrapper inside project folder
+    - name: Fix Gradle Build Configs
       run: |
-        cd iTAG_Controller_GitHub
-        if [ ! -f gradlew ]; then
-          gradle wrapper
+        PROJECT_ROOT=$(find . -name "settings.gradle" -exec dirname {} \;)
+        echo "Проект найден в папке: $PROJECT_ROOT"
+        cd "$PROJECT_ROOT"
+        
+        # Исправляем несовместимость версий Gradle и Java на лету
+        if [ -f build.gradle ]; then
+          sed -i 's/id "com.android.application" version .*/id "com.android.application" version "8.2.2" apply false/g' build.gradle 2>/dev/null || true
         fi
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x iTAG_Controller_GitHub/gradlew
-
-    - name: Build Assemble Release
-      run: |
-        cd iTAG_Controller_GitHub
-        ./gradlew assembleRelease
+        
+        # Генерируем современный обертчик Gradle
+        gradle wrapper --gradle-version 8.2
+        chmod +x gradlew
+        
+        # Запуск компиляции APK
+        ./gradlew assembleRelease --no-daemon
 
     - name: Upload Artifact iTAG-Controller-APK
       uses: actions/upload-artifact@v4
       with:
         name: iTAG-Controller-APK
-        path: iTAG_Controller_GitHub/app/build/outputs/apk/release/*.apk
+        path: "**/build/outputs/apk/release/*.apk"
